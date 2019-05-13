@@ -12,117 +12,29 @@ services:
     command: -p 25432
     restart: always
 
-  zookeeper-1:
+  zookeeper:
     image: confluentinc/cp-zookeeper:5.2.1
-    container_name: zk1
+    container_name: zk
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 22181
     ports:
       - "22181:2181"
-      - "22888:2888"
-      - "23888:3888"
-    environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: 22181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
-      ZOOKEEPER_MAX_CLIENT_CNXNS: 30
-    mem_limit: 200m
-    restart: always
-
-  zookeeper-2:
-    image: confluentinc/cp-zookeeper:5.2.1
-    container_name: zk2
-    ports:
-      - "32181:2181"
-      - "32888:2888"
-      - "33888:3888"
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 32181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
-      ZOOKEEPER_MAX_CLIENT_CNXNS: 30
-    mem_limit: 200m
-    restart: always
-
-  zookeeper-3:
-    image: confluentinc/cp-zookeeper:5.2.1
-    container_name: zk3
-    ports:
-      - "42181:2181"
-      - "42888:2888"
-      - "43888:3888"
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 42181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: zookeeper-1:22888:23888;zookeeper-2:32888:33888;zookeeper-3:42888:43888
-      ZOOKEEPER_MAX_CLIENT_CNXNS: 30
     mem_limit: 200m
     restart: always
 
 
-  kafka-1:
+  kafka:
     image: confluentinc/cp-kafka:5.2.1
-    container_name: kafka-1
+    container_name: kafka
     ports:
       - "19092:9092"
     depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:19092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
-      KAFKA_DELETE_TOPIC_ENABLE: "true"
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      CONFLUENT_SUPPORT_METRICS_ENABLE: 0
-    mem_limit: 1300m
-    restart: always
-
-  kafka-2:
-    image: confluentinc/cp-kafka:5.2.1
-    container_name: kafka-2
-    ports:
-      - "29092:9092"
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:29092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
-      KAFKA_DELETE_TOPIC_ENABLE: "true"
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      CONFLUENT_SUPPORT_METRICS_ENABLE: 0
-    mem_limit: 1300m
-    restart: always
-
-  kafka-3:
-    image: confluentinc/cp-kafka:5.2.1
-    container_name: kafka-3
-    ports:
-      - "39092:9092"
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:39092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
-      KAFKA_DELETE_TOPIC_ENABLE: "true"
-      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       CONFLUENT_SUPPORT_METRICS_ENABLE: 0
     mem_limit: 1300m
     restart: always
@@ -133,15 +45,11 @@ services:
     ports:
       - "18081:8081"
     depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-      - kafka-1
-      - kafka-2
-      - kafka-3
+      - zookeeper
+      - kafka
     environment:
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:18081
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper-1:22181,zookeeper-2:32181,zookeeper-3:42181
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:22181
     mem_limit: 400m
     restart: always

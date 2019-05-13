@@ -7,7 +7,7 @@ services:
       context: command-generator
     container_name: command-generator
     environment:
-      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_BROKERS: "kafka:19092"
       SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
     mem_limit: 200m
     restart: always
@@ -21,7 +21,7 @@ services:
     environment:
       DB_PORT: "25432"
       DB_HOSTNAME: "db"
-      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_BROKERS: "kafka:19092"
       SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
     mem_limit: 200m
     restart: always
@@ -36,7 +36,7 @@ services:
       - command-generator
       - command-handler
     environment:
-      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_BROKERS: "kafka:19092"
       SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
     mem_limit: 150m
     restart: always
@@ -52,7 +52,7 @@ services:
     environment:
       DB_PORT: "25432"
       DB_HOSTNAME: "db"
-      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      KAFKA_BROKERS: "kafka:19092"
       SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
     mem_limit: 250m
     restart: always
