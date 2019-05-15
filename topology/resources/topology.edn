@@ -1,0 +1,11 @@
+{"_schemas"                    [1 3 nil {:cleanup.policy "compact"}]
+ "__confluent.support.metrics" [1 3 nil {}]
+ "_confluent-metrics"          [1 3 nil {}]
+ "heartbeat"                   [1 3 :Heartbeat {:retention.ms "900000"} :now]
+ "confirm_account_creation"    [1 3 :ConfirmAccountCreation {} :id]
+ "account_creation_confirmed"  [1 3 :AccountCreationConfirmed {} :id]
+ "account_creation_failed"     [1 3 :AccountCreationFailed {} :id]
+ "confirm_money_transfer"      [9 3 :ConfirmMoneyTransfer {} :id]
+ "money_transfer_confirmed"    [9 3 :MoneyTransferConfirmed {} :id]
+ "money_transfer_failed"       [9 3 :MoneyTransferFailed {} :id]
+ "balance_changed"             [9 3 :BalanceChanged {} :iban]}

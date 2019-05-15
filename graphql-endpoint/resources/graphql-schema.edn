@@ -1,0 +1,82 @@
+{:enums
+ {:dtype
+  {:description "whether the money was added or removed"
+   :values      [:DEBIT :CREDIT]}}
+ :objects
+ {:Transaction
+  {:description "The result of money successfully being transferred"
+   :fields      {
+                 :id          {:type (non-null ID)}
+                 :iban        {:type String :description "The iban of the account that was changed."}
+                 :new_balance {:type String :description "The amount in euros after the transaction."}
+                 :changed_by  {:type String :description "The amount in euros of the change, a negative number means debit, positive is credit."}
+                 :from_to     {:type String :description "The iban or name of the counter party."}
+                 :descr       {:type String :description "The description of why the money was transferred."}
+                 :direction   {:type :dtype :description "Whether it's a DEBIT or CREDIT change."}
+                 }}
+  :AccountResult
+  {:description "The information needed to make transactions"
+   :fields      {
+                 :iban   {:type String :description "The iban of the account."}
+                 :token  {:type String :description "The token needed to access the account."}
+                 :reason {:type String :description "In case of error this will be filled."}
+                 }}
+  :MoneyTransferResult
+  {:description "The feedback from a money transfer request"
+   :fields      {
+                 :uuid {:type String :description "Uuid used for the request"}
+                 :success {:type Boolean :description "Whether the transfer succeeded"}
+                 :reason  {:type String :description "The reason the transfer failed."}
+                 }}}
+ :queries
+ {
+  :transaction_by_id
+  {:type        :Transaction
+   :description "Select a transaction by its unique id, if it exists."
+   :args        {:id {:type (non-null ID)}}
+   :resolve     :query/transaction-by-id}
+  :transactions_by_iban
+  {:type        (list Transaction)
+   :description "Get all the transactions of a iban."
+   :args        {:iban      {:type (non-null String)}
+                 :max_items {:type (non-null Int)}}
+   :resolve     :query/transactions-by-iban}
+  :all_last_transactions
+  {:type        (list Transaction)
+   :description "Get last transaction of all active iban."
+   :resolve     :query/all-last-transactions}
+  }
+ :subscriptions
+ {
+  :stream_transactions
+  {:type        :Transaction
+   :description "Get transactions as they happen, with optional filtering"
+   :args        {:iban       {:type        String
+                              :description "optional filter on matching iban"}
+                 :min_amount {:type        Int
+                              :description "optional filter based on transferred amount"}
+                 :direction  {:type        :dtype
+                              :description "optional filter on DEBIT or CREDIT"}}
+   :stream      :stream-transactions}
+  :get_account
+  {:type        :AccountResult
+   :description "Get the result of account creation, account may be just created or already exist"
+   :args        {:username {:type (non-null String)}
+                 :password {:type (non-null String)}}
+   :stream      :get-account}
+  :money_transfer
+  {:type        :MoneyTransferResult
+   :description "Try to make a money transfer"
+   :args        {:uuid   {:type        (non-null String)
+                           :description "This will be used to prevent duplication, and to allow to retrieve the status later on"}
+                 :token   {:type        (non-null String)
+                           :description "The token needed to authenticate the transaction"}
+                 :amount {:type        (non-null Int)
+                           :description "The amount in euro cents to transfer"}
+                 :from {:type        (non-null String)
+                          :description "The iban of the account the money is debited"}
+                 :to {:type        (non-null String)
+                          :description "The iban of the account the money is credited"}
+                 :descr  {:type        (non-null String)
+                          :description "The description of the money transfer"}}
+   :stream      :money-transfer}}}

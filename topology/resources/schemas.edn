@@ -1,0 +1,15 @@
+{:records {:Heartbeat                [{:name "beat" :type :long}]
+           :ConfirmAccountCreation   [:id :a-type]
+           :AccountCreationConfirmed [:id :iban :token :a-type]
+           :AccountCreationFailed    [:id :reason]
+           :ConfirmMoneyTransfer     [:id :token :amount {:name "from" :type :string} {:name "to" :type :string} :description]
+           :MoneyTransferConfirmed   [:id]
+           :MoneyTransferFailed      [:id :reason]
+           :BalanceChanged           [:iban {:name "new-balance" :type :long} {:name "changed-by" :type :long} {:name "from-to" :type :string} :description]}
+ :types   {:id        {:name "Uuid" :type :fixed :size 16}
+           :a-type      {:name "Atype" :type :enum :symbols ["AUTO" "MANUAL"]}
+           :reason      :string
+           :iban        :string
+           :token       :string
+           :amount      :long
+           :description :string}}

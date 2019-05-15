@@ -1,0 +1,4 @@
+{
+ :category-name "Language"
+ :mapping {"Clojure" "clojure-*"}
+ }

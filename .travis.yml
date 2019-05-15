@@ -1,0 +1,24 @@
+dist: xenial
+language: clojure
+lein: 2.9.1
+jdk: openjdk11
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - chromium-browser=73.0.3683.86-0ubuntu0.16.04.1
+      - chromium-chromedriver
+install:
+  - cd /opt
+  - git clone https://github.com/sass/libsass.git
+  - git clone https://github.com/sass/sassc.git libsass/sassc
+  - export SASS_LIBSASS_PATH=/opt/libsass
+  - cd libsass/sassc
+  - make
+  - ln -s /opt/libsass/sassc/bin/sassc ~/bin/sassc
+before_script:
+  - cd /home/travis/build/gklijs/open-bank-mark
+  - "./prepare.sh"
+  - "./restart.sh"
+script: "java -jar test/target/test.jar"

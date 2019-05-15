@@ -1,0 +1,70 @@
+---
+version: '2.2'
+services:
+
+  command-generator:
+    build:
+      context: command-generator
+    container_name: command-generator
+    environment:
+      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
+    mem_limit: 200m
+    restart: always
+
+  command-handler:
+    build:
+      context: command-handler
+    container_name: command-handler
+    depends_on:
+      - command-generator
+    environment:
+      DB_PORT: "25432"
+      DB_HOSTNAME: "db"
+      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
+    mem_limit: 200m
+    restart: always
+
+  heartbeat:
+    build:
+      context: heartbeat
+    container_name: heartbeat
+    ports:
+      - "17888:17888"
+    depends_on:
+      - command-generator
+      - command-handler
+    environment:
+      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
+    mem_limit: 150m
+    restart: always
+
+  graphql-endpoint:
+    build:
+      context: graphql-endpoint
+    container_name: graphql-endpoint
+    ports:
+      - "8888:8888"
+    depends_on:
+      - command-handler
+    environment:
+      DB_PORT: "25432"
+      DB_HOSTNAME: "db"
+      KAFKA_BROKERS: "kafka-1:19092,kafka-2:29092,kafka-3:39092"
+      SCHEMA_REGISTRY_URL: "http://schema-registry:18081"
+    mem_limit: 250m
+    restart: always
+
+  frontend:
+    build:
+      context: frontend
+    container_name: frontend
+    ports:
+      - "8181:80"
+    depends_on:
+      - graphql-endpoint
+    environment:
+      - NGINX_PORT=80
+    restart: always
