@@ -29,20 +29,16 @@
    :err-db-mem      (get-statistic data-rows 6 kixi/standard-error)
    :average-ch-cpu  (get-statistic data-rows 7 kixi/mean)
    :err-ch-cpu      (get-statistic data-rows 7 kixi/standard-error)
-   :max-ch-cpu      (get-statistic data-rows 7 kixi/max)
-   :min-ch-cpu      (get-statistic data-rows 7 kixi/min)
    :average-ch-mem  (get-statistic data-rows 8 kixi/mean)
    :err-ch-mem      (get-statistic data-rows 8 kixi/standard-error)
-   :max-ch-mem      (get-statistic data-rows 8 kixi/max)
-   :min-ch-mem      (get-statistic data-rows 8 kixi/min)
    :average-kb-cpu  (get-statistic data-rows 9 kixi/mean)
    :err-kb-cpu      (get-statistic data-rows 9 kixi/standard-error)
-   :max-kb-cpu      (get-statistic data-rows 9 kixi/max)
-   :min-kb-cpu      (get-statistic data-rows 9 kixi/min)
    :average-kb-mem  (get-statistic data-rows 10 kixi/mean)
    :err-kb-mem      (get-statistic data-rows 10 kixi/standard-error)
-   :max-kb-mem      (get-statistic data-rows 10 kixi/max)
-   :min-kb-mem      (get-statistic data-rows 10 kixi/min)
+   :average-ge-cpu  (get-statistic data-rows 11 kixi/mean)
+   :err-ge-cpu      (get-statistic data-rows 11 kixi/standard-error)
+   :average-ge-mem  (get-statistic data-rows 12 kixi/mean)
+   :err-ge-mem      (get-statistic data-rows 12 kixi/standard-error)
    :data-points     (count data-rows)
    })
 
@@ -105,24 +101,18 @@
     (oz/export! lp (str "frontend/public/" y-value ".html"))))
 
 (def outputs {"average-latency" "Average latency (ms)"
-              "max-latency" "Max latency (ms)"
-              "min-latency" "Min latency (ms)"
-              "min-count" "Min count (heartbeats send)"
+              "max-latency"     "Max latency (ms)"
+              "min-latency"     "Min latency (ms)"
+              "min-count"       "Min count (heartbeats send)"
               "average-db-cpu"  "Average cpu database (% from total)"
               "average-db-mem"  "Average mem database (MiB)"
               "average-ch-cpu"  "Average cpu command-handler (% from total)"
-              "max-ch-cpu" "Max cpu command-handler (% from total)"
-              "min-ch-cpu" "Min cpu command-handler (% from total)"
               "average-ch-mem"  "Average mem command-handler (MiB)"
-              "max-ch-mem" "Max mem command-handler (MiB)"
-              "min-ch-mem" "Min mem command-handler (MiB)"
               "average-kb-cpu"  "Average cpu kafka broker (% from total)"
-              "max-kb-cpu" "Max cpu kafka broker (% from total)"
-              "min-kb-cpu" "Min cpu kafka broker (% from total)"
               "average-kb-mem"  "Average mem kafka broker (MiB)"
-              "max-kb-mem" "Max mem kafka broker (MiB)"
-              "min-kb-mem" "Min mem kafka broker (MiB)"
-              "data-points" "Amount of measurements"})
+              "average-ge-cpu"  "Average cpu graphql endpoint (% from total)"
+              "average-ge-mem"  "Average mem graphql endpoint (MiB)"
+              "data-points"     "Amount of measurements"})
 
 (defn process
   [category-name data]

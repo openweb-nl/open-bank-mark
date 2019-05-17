@@ -155,17 +155,11 @@
         [:li [:a {:href "average-db-cpu.html" :target "_blank"} "Avg db cpu"]]
         [:li [:a {:href "average-db-mem.html" :target "_blank"} "Avg db memory"]]
         [:li [:a {:href "average-ch-cpu.html" :target "_blank"} "Avg ch cpu"]]
-        [:li [:a {:href "min-ch-cpu.html" :target "_blank"} "Min ch cpu"]]
-        [:li [:a {:href "max-ch-cpu.html" :target "_blank"} "Max ch cpu"]]
         [:li [:a {:href "average-ch-mem.html" :target "_blank"} "Avg ch memory"]]
-        [:li [:a {:href "min-ch-mem.html" :target "_blank"} "Min ch memory"]]
-        [:li [:a {:href "max-ch-mem.html" :target "_blank"} "Max ch memory"]]
         [:li [:a {:href "average-kb-cpu.html" :target "_blank"} "Avg kb cpu"]]
-        [:li [:a {:href "min-kb-cpu.html" :target "_blank"} "Min kb cpu"]]
-        [:li [:a {:href "max-kb-cpu.html" :target "_blank"} "Max kb cpu"]]
         [:li [:a {:href "average-kb-mem.html" :target "_blank"} "Avg kb memory"]]
-        [:li [:a {:href "min-kb-mem.html" :target "_blank"} "Min kb memory"]]
-        [:li [:a {:href "max-kb-mem.html" :target "_blank"} "Max kb memory"]]
+        [:li [:a {:href "average-ge-cpu.html" :target "_blank"} "Avg ge cpu"]]
+        [:li [:a {:href "average-ge-mem.html" :target "_blank"} "Avg ge memory"]]
         [:li [:a {:href "data-points.html" :target "_blank"} "Data points"]]]])
 
 

@@ -11,24 +11,23 @@
 (def max-interaction-time 5000)
 (def min-loop-time 1000)
 (def max-loops 6000)
-(def max-time-outs 10)
+(def max-time-outs 3)
 (def batch-cycle 60)
 (def loops-for-success 1000)
 
 (defn init
   []
   (process/init)
-  (interactions/prep)
+  (load/init)
   (file/init)
-  (load/init))
+  (interactions/prep))
 
 (defn close
   [loop-number]
-  (load/close)
-  (process/close)
   (interactions/close)
   (file/close)
   (load/close)
+  (process/close)
   (if (> loop-number loops-for-success)
     (System/exit 0)
     (System/exit 1)))

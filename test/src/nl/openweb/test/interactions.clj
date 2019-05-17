@@ -47,10 +47,8 @@
   (try
     (run loop-number)
     (catch Exception error
-      (println "An error occurred" (.getMessage error))
-      (println "Cause" (.getClass error))
-      (print-stack-trace error)
-      5000)))
+      (println "An error occurred" (.toString error))
+      Integer/MAX_VALUE)))
 
 (defn wait-till-button
   []
