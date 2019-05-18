@@ -18,7 +18,7 @@ install:
   - make
   - ln -s /opt/libsass/sassc/bin/sassc ~/bin/sassc
 before_script:
-  - cd /home/travis/build/gklijs/open-bank-mark
+  - cd $TRAVIS_BUILD_DIR
   - ./prepare.sh
   - ./restart.sh
 script: java -jar test/target/test.jar

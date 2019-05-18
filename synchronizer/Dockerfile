@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM azul/zulu-openjdk-alpine:11-jre
 MAINTAINER Gerard Klijs <gerard@openweb.nl>
 
 ADD target/syn-docker.jar /app.jar
