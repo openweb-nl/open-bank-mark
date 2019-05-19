@@ -19,25 +19,44 @@ Contents
 
 ## <a id="intro">Intro</a>
 
-This project is an example of an event sourcing application using Kafka. It also contains an end-to-end test making it possible to compare different implementations or configurations. For example one could set the `linger.ms` setting at different values in the topology module, so everything build on Clojure will use that setting. It's possible to run tests in travis using the `.travis.yml` file, or on some other machine using the `loop.sh` script.
+This project is an example of an event sourcing application using Kafka.
+It also contains an end-to-end test making it possible to compare different implementations or configurations. For example one could set the `linger.ms` setting at different values in the topology module, so everything build on Clojure will use that setting.
+Another option would be to drag [KSQL](https://docs.confluent.io/current/ksql/docs/quickstart.html) into the project and use topics instead of a database for the command-handler.
+It's possible to run tests in travis using the `.travis.yml` file, or on some other machine using the `loop.sh` script.
 
-If you don't really know what Kafka is, then it's a good idea to read [an introduction to Kafka](https://hackernoon.com/thorough-introduction-to-apache-kafka-6fbf2989bbc1). For this project we kind of simulate a bank. The article which served as inspiration for this workshop is [real-time alerts](https://www.confluent.io/blog/real-time-financial-alerts-rabobank-apache-kafkas-streams-api/). In general confluent has great documentation and blogs.
+If you don't really know what Kafka is, then it's a good idea to read [an introduction to Kafka](https://hackernoon.com/thorough-introduction-to-apache-kafka-6fbf2989bbc1).
+For this project we kind of simulate a bank. The article which served as inspiration for this workshop is [real-time alerts](https://www.confluent.io/blog/real-time-financial-alerts-rabobank-apache-kafkas-streams-api/).
 
-As a general rule it's best to have the same kind of messages on a Kafka cluster. Data on the brokers is always stored in a binary format, but for clients it's easier to product and consume in something other than binary, therefore there are a lot of (de)serialiser options. Some of the most common ones are the String(de)seriliser and the KafkaAvro(de)seriliser. For this project I choose to use a String for the keys, and Avro for the values. You can leave the key empty, but when you supply a key, it can be used to divide a topic among partitions. The default way Kafka partitions messages into partitions is using the hash of the key. In this project it means that for the 'balance_changed' because we use the iban as key, every message with the same key will end up in the same partition. For the other messages we use the id as key. This will prevent BalanceChanged events to appear in incorrect order in case of hiccups or errors. Another way the keys can be used is to 'overwrite' the message with the same key. You can make a compacted topic, where the last message with some key will always be kept. You can use this with Kafka streams api to generate a 'table' view of a topic.
+As a general rule it's best to have the same kind of messages on a Kafka cluster.
+Data on the brokers is always stored in a binary format, but for clients it's easier to product and consume in something other than binary, therefore there are a lot of (de)serialiser options.
+Some of the most common ones are the String(de)seriliser and the KafkaAvro(de)seriliser.
+For this project I choose to use a String for the keys, and Avro for the values.
+You can leave the key empty, but when you supply a key, it can be used to divide a topic among partitions. The default way Kafka partitions messages into partitions is using the hash of the key. In this project it means that for the 'balance_changed' because we use the iban as key, every message with the same key will end up in the same partition.
+For the other messages we use the id as key. This will prevent BalanceChanged events to appear in incorrect order in case of hiccups or errors.
+Another way the keys can be used is to 'overwrite' the message with the same key. You can make a compacted topic, where the last message with some key will always be kept. You can use this with Kafka streams api to generate a 'table' view of a topic.
 
 This project and it's modules are build with [Clojure](https://clojure.org/), and uses [Leiningen](https://leiningen.org/) as build tool. For building locally sassc is needed, for unix you can see the [travis config](/.travis.yml) or [ask ubuntu answer](https://askubuntu.com/questions/566675/how-to-install-node-sass-gulp-sass-on-ubuntu-14-04-or-linux-mint-17/566681#566681), on Mac with brew you can use `brew install sassc`.Some modules can be used from java, and some of the code generated (Avro classes) are also java. In the `ch-kotlin` branch there is an example of using Kotlin for the command handler, and a `ch-rust` with a rust implementation of the command-handler. Even when using Docker you need to have leiningen and sassc installed to build the project. This is mainly because of the use of modules, and also because the Kotlin version need the compiled topology it would need some trickery to work. 
 
-The base idea of the project is to serve as an example of event sourcing, where instead of having a 'state' as source of truth we use events. It makes use of some of the best practices by using both events which start with 'Confirm', which need to be handled by another component and lead to either a 'Confirmed' or 'Failed' event. By using id's in the messages, when needed the creator of the 'Confirm' event can eventually know whether the command succeeded. Sometimes there may be additional information in the confirmed events, failed events typically contain the reason why the command failed. Even trough the 'real' source of truth or events, most component keep some kind of state. In this particular project almost all state only exists in memory, and even the Kafka containers are not configured to have use data volumes. Which makes it easy to restart the project, but is not production like. There are other things missing as well, like security, and some components would need additional features to be production ready.
+The base idea of the project is to serve as an example of event sourcing, where instead of having a 'state' as source of truth we use events. It makes use of some of the best practices by using both events which start with 'Confirm', which need to be handled by another component and lead to either a 'Confirmed' or 'Failed' event.
+By using id's in the messages, when needed the creator of the 'Confirm' event can eventually know whether the command succeeded. Sometimes there may be additional information in the confirmed events, failed events typically contain the reason why the command failed. Even trough the 'real' source of truth or events, most component keep some kind of state. In this particular project almost all state only exists in memory, and even the Kafka containers are not configured to have use data volumes.
+Which makes it easy to restart the project, but is not production like. There are other things missing as well, like security, and some components would need additional features to be production ready.
 
 All the event we use are versioned using [Avro](https://avro.apache.org/), the [Schema Registry](https://docs.confluent.io/current/schema-registry/docs/index.html) is configured with default settings. This makes sure, when using the Avro (de)serialiser, we can update schema's but only with backwards-compatible ones. The serialiser takes care of converting binary data to/from data in specific records. This is based on the topic, so each type of event currently has it's own topic, since [an enhancement of the Schema Registry](https://www.confluent.io/blog/put-several-event-types-kafka-topic/) it's possible to keep using the Schema Registry for restricting breaking changes, while still being able to put multiple types of events in one topic. It's possible to change the project to this setup (also ), and reduce the amount of topics used.
 
-Underneath is a complete overview of all the components. Where the orange ones are part of the Confluent Platform, the green is Nginx and the blue ones are PostgreSQL databases. The yellow ones are, at least in the master branch, clojure applications.
+Underneath is a complete overview of all the components.
+Where the orange ones are part of the Confluent Platform, the green is Nginx and the blue ones are PostgreSQL databases.
+The yellow ones are, at least in the master branch, clojure applications.
 
 ![All connections](docs/overview.svg)
 
 ## <a id="development">Development</a>
 
-Development is done in Clojure with a lot of java integration. This is for a large part because there is not a good recent Clojure library. This project is only using the producer and consumer to add or consume data from Kafka. But especially when merging topics it might be easier to use the Kafka Streams api. With it you can do things like having a time window, or prefer consuming from one topic over another. This is for example relevant when you have an 'AlertsSettingsUpdated' event which must be combined with a 'MightTriggerAlert' event. Because you want to send alerts, using the latest settings available.
+Development is done in Clojure with a lot of java integration.
+This is for a large part because there is not a good recent Clojure library.
+This project is only using the producer and consumer to add or consume data from Kafka.
+But especially when merging topics it might be easier to use the Kafka Streams api.
+With it you can do things like having a time window, or prefer consuming from one topic over another.
+This is for example relevant when you have an 'AlertsSettingsUpdated' event which must be combined with a 'MightTriggerAlert' event. Because you want to send alerts, using the latest settings available.
 
 ### <a id="building-locally">Building locally</a>
 
@@ -52,6 +71,8 @@ This project uses the modules plugin for Leingen. If you have Leingen installed 
 You will need Leiningen and sassc installed. Then with the `prepare.sh` script all the fat jars and a few other files needed for the Docker images are created. Then with the `restart.sh` script you can use Docker to set it up. You will need about 8Gb of ram for Docker to not run out of memory.
 
 Currently the script works with a sleep, to prevent unnecessary errors from other containers not being ready yet. You can ignore the errors about orphan containers apparently this is a side effect of having multiple Docker compose files in the same folder. Getting it to work without multiple Docker compose files it not straightforward. Compose file version 2 is used for multiple reasons, it's easy to set a mem limit, and the names of the containers can be set, which we need to measure cpu and memory.
+
+For the Kafka images the latest ones from Confluent are used. For the frontend we use Nginx. Most other containers are just jar's that run inside `azul/zulu-openjdk-alpine` to keep the docker image small. For the Confluent images there are a lot of options that can be set, like disabling auto creation of topics but it's kept to a minimum for this project.
 
 ### <a id="building-remote">Building remote</a>
 
@@ -152,16 +173,15 @@ This endpoint allows querying/streaming `BalanceChanged` events, creating an acc
 ### <a id="frontend">Front-end</a>
 
 This is a basic nginx container which contains the output from the Clojurescript re-frame code. The container is exposed at port 8181.
-
 If there is data matching the mapping.edn in the resources there will also be those html files, reachable from the background tab.
-
-
+The location of the GraphQL endpoint is configured in [core.cljs](frontend/src/cljs/open_bank/core.cljs) this needs to be changed if you want others to be able to use the bank.
+Nginx now just serves static files, but could be used to proxy traffic to the graphql endpoint to prevent CORS. If you run into CORS trouble localy you may need to add the specific port you use to run the front-end to the [server.clj](graphql-endpoint/src/nl/openweb/graphql_endpoint/server.clj) in the endpoint at the `:io.pedestal.http/allowed-origins` key.
 
 ### <a id="test">Test</a>
 
 This module contains the code both to run tests and to generate multiple html files from one or multiple run tests.
 Each run tests will write a .edn file in the resources folder. The name is a combination of the `base-file-name` in [file.clj](test/src/nl/openweb/test/file.clj) and the year, month, day, hour and minute the test is started.
-A mapping can be edited in the [mapping.edn](resources/mapping.edn) file. You can combine several files if they start the same by adding a '*', for example 'clojure-*' will combine all the test run starting with 'clojure-'.
+A mapping can be edited in the [mapping.edn](resources/mapping.edn) file. You can combine several files if they start the same by adding a '\*', for example 'clojure-\*' will combine all the test run files starting with 'clojure-'.
 A test will start by making some connections and waiting till the user is logged in. When this happens the client will have received and Iban and the matching token in order to transfer money.
 It will run depending on some settings in [core.clj](test/src/nl/openweb/test/core.clj). It will run till `max-time-outs` occur, where a time-out is when the response takes longer then `max-interaction-time` ms. The `batch-cycle` determines after how many cycles the load is increases.
 The `loops-for-success` determines the exit code, and with it a successful run for travis.
@@ -176,7 +196,7 @@ It's the easiest to run the tests and generate the output with the scripts using
 
 ## <a id="scripts">Scripts</a>
 
-There are several scripts to automate things and thus making live easier.
+There are several scripts to automate things and thus making live easier. They are placed at the root level to not make them to complicated. Often they need multiple modules.
 * `clean.sh` stops and removes all used Docker container, it does not throw away the images
 * `loop.sh` takes a number and will (re)create the whole environment, and run a test x times.
 * `prepare.sh` is needed the first time before `restart.sh` can be used. It will get all the dependencies and build jar's. It needs leiningen, maven, sassc to be installed.
