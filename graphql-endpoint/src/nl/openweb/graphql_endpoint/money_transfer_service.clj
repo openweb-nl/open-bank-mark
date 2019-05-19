@@ -67,7 +67,7 @@
           (source-stream past-request))
         (let [sub-id (add-sub (:subscriptions db) uuid source-stream)]
           (swap! (:transfer-requests db) assoc uuid {})
-          (clients/produce (get-in db [:kafka-p :producer]) cmt-topic (create-money-transfer (UUID/fromString uuid) args))
+          (clients/produce (get-in db [:kafka-producer :producer]) cmt-topic (create-money-transfer (UUID/fromString uuid) args))
           sub-id))
       (catch IllegalArgumentException e (log/warn uuid "is not valid" e)))))
 
@@ -95,9 +95,9 @@
 
 (defn new-service
   []
-  {:m-service (-> {}
+  {:money-transfer-service (-> {}
              map->MoneyTransferService
-             (component/using [:kafka-p]))})
+             (component/using [:kafka-producer]))})
 
 (defn stop-transaction-subscription
   [db id]

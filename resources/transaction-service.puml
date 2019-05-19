@@ -1,0 +1,21 @@
+@startuml
+
+title Transaction service
+
+package "nl.openweb.graphql-endpoint.transaction-service.clj" as ts #Yellow {
+    component consumer as c
+    database transaction as tr #LightBlue
+}
+actor client as cl
+[Kafka cluster] as kc #Orange
+
+component "schema-provider" as sp #Yellow
+
+cl <--> sp :queries using\lserver, can also\lsubscribe
+c <-- kc :consumes\nBalanceChanged
+ts <-- sp :executes function\ngetting transactions\nor a subscription
+c --> sp :send transaction\nfor active subscriptions
+c <- tr :insert transactions
+
+
+@enduml

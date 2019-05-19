@@ -1,0 +1,15 @@
+@startuml
+
+title Synchronizer
+
+package nl.openweb.synchronizer #Yellow {
+    component admin.clj as admin
+    component schema.clj as schema
+}
+[Kafka cluster] as kc #Orange
+[Schema registry] as sr #Orange
+
+admin --> kc: creates/deletes topics\nusing the topology.edn\ntodo is update
+schema --> sr: sets/updates the schema's\nusing the schemas.edn
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+
+title Money transfer service
+
+package "nl.openweb.graphql-endpoint.money-transfer-service.clj" as ts #Yellow {
+    component producer as p
+    component consumer as c
+}
+
+[Kafka cluster] as kc #Orange
+actor client as cl
+component "schema-provider" as sp #Yellow
+
+c <-- kc :consumes\lMoneyTransferConfirmed\nand\nMoneyTransferFailed
+cl <-l-> sp :request transfer\lusing server
+ts <-- sp :executes function\nresulting in a\n transfer and\ncreates subscription\nfor the result
+c --> sp :send MoneyTransferResult\nfor active subscriptions
+p --> kc :produces\lConfirmMoneyTransfer
+
+@enduml

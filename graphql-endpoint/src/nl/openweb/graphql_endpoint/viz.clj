@@ -4,4 +4,5 @@
 
 (defn -main
   []
-  (visualize-system (system/new-system)))
+  (visualize-system (system/new-system) {:format  :svg})
+  (System/exit 0))

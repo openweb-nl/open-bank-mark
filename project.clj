@@ -1,7 +1,5 @@
 (defproject nl.openweb/open-bank-mark "0.1.0-SNAPSHOT"
-  :plugins [[lein-modules "0.3.11"]
-            [lein-plantuml "0.1.21"]]
-  :plantuml [["resources/*.puml" :svg "docs"]]
+  :plugins [[lein-modules "0.3.11"]]
   :modules {:inherited
                       {:repositories  [["confluent" "https://packages.confluent.io/maven/"]]
                        :aliases       {"all" ^:displace ["do" "clean," "test," "install", "uberjar"]

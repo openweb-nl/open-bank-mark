@@ -1,0 +1,23 @@
+@startuml
+
+title Running a test
+
+package nl.openweb.test #Yellow {
+    component file.clj as fi
+    component interactions.clj as in
+    component load.clj as lo
+    component process.clj as pr
+}
+[Chrome driver] as cd #Pink
+[Heartbeat] as hb #Yellow
+["<color:white>Docker</color>"] as do #DarkBlue
+file output
+
+fi <- pr: run every 20 iterations
+in -> fi: time ms
+fi --> output :writes the data
+in --> cd :logs in and\lmake transactions
+lo --> hb :sets the load
+pr --> do :get cpu and\lmemory of\ncontainers
+
+@enduml

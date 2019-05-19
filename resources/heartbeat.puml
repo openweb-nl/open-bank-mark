@@ -1,0 +1,21 @@
+@startuml
+
+title Heartbeat
+
+package nl.openweb.heartbeat.core.clj #Yellow {
+    component counter as c
+    component "batch-size" as b
+    component "sleep-time" as s
+    component producer as p
+}
+[Test] as t #Yellow
+[Kafka cluster] as kc #Orange
+[Schema registry] as sr #Orange
+
+p --> kc :produces Heartbeat
+p <-- sr :get schema
+c --> t :get counter to\nmake sure hearbeats\nare send
+b <-- t :keep increasing batch\n size as test runs
+s <-- t :set sleep time to\nknow msg/sec
+
+@enduml

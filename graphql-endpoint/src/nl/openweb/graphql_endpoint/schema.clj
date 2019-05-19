@@ -6,64 +6,64 @@
     [com.walmartlabs.lacinia.util :as util]
     [com.walmartlabs.lacinia.schema :as schema]
     [com.stuartsierra.component :as component]
-    [nl.openweb.graphql-endpoint.account-creation-service :as a-service]
-    [nl.openweb.graphql-endpoint.money-transfer-service :as m-service]
-    [nl.openweb.graphql-endpoint.transaction-service :as t-service]
+    [nl.openweb.graphql-endpoint.account-creation-service :as account-creation-service]
+    [nl.openweb.graphql-endpoint.money-transfer-service :as money-transfer-service]
+    [nl.openweb.graphql-endpoint.transaction-service :as transaction-service]
     [clojure.edn :as edn]))
 
 (defn transaction-by-id
-  [t-service]
+  [transaction-service]
   (fn [_ args _]
-    (t-service/find-transaction-by-id t-service (:id args))))
+    (transaction-service/find-transaction-by-id transaction-service (:id args))))
 
 (defn transactions-by-iban
-  [t-service]
+  [transaction-service]
   (fn [_ args _]
-    (t-service/find-transactions-by-iban t-service (:iban args) (:max_items args))))
+    (transaction-service/find-transactions-by-iban transaction-service (:iban args) (:max_items args))))
 
 (defn all-last-transactions
-  [t-service]
+  [transaction-service]
   (fn [_ _ _]
-    (t-service/find-all-last-transactions t-service)))
+    (transaction-service/find-all-last-transactions transaction-service)))
 
 (defn stream-transactions
-  [t-service]
+  [transaction-service]
   (fn [_ args source-stream]
     (log/debug "starting transaction subscription with args" args)
     ;; Create an object for the subscription.
-    (let [id (t-service/create-transaction-subscription t-service source-stream (:iban args) (:min_amount args) (:direction args))]
+    (let [id (transaction-service/create-transaction-subscription transaction-service source-stream (:iban args) (:min_amount args) (:direction args))]
       ;; Return a function to cleanup the subscription
-      #(t-service/stop-transaction-subscription t-service id))))
+      #(transaction-service/stop-transaction-subscription transaction-service id))))
 
 (defn get-account
-  [a-service]
+  [account-creation-service]
   (fn [_ args source-stream]
-    (let [id (a-service/get-account a-service source-stream (:username args) (:password args))]
-      #(a-service/stop-transaction-subscription a-service id))))
+    (let [id (account-creation-service/get-account account-creation-service source-stream (:username args) (:password args))]
+      #(account-creation-service/stop-transaction-subscription account-creation-service id))))
 
 (defn money-transfer
-  [m-service]
+  [money-transfer-service]
   (fn [_ args source-stream]
     (log/debug "starting make money transfer subscription with args:" args)
-    (let [id (m-service/money-transfer m-service source-stream args)]
-      #(m-service/stop-transaction-subscription m-service id))))
+    (let [id (money-transfer-service/money-transfer money-transfer-service source-stream args)]
+      #(money-transfer-service/stop-transaction-subscription money-transfer-service id))))
 
 (defn resolver-map
   [component]
-  (let [t-service (:t-service component)]
-    {:query/transaction-by-id     (transaction-by-id t-service )
-     :query/transactions-by-iban  (transactions-by-iban t-service )
-     :query/all-last-transactions (all-last-transactions t-service )
+  (let [transaction-service (:transaction-service component)]
+    {:query/transaction-by-id     (transaction-by-id transaction-service )
+     :query/transactions-by-iban  (transactions-by-iban transaction-service )
+     :query/all-last-transactions (all-last-transactions transaction-service )
      }))
 
 (defn stream-map
   [component]
-  (let [t-service (:t-service component)
-        a-service (:a-service component)
-        m-service (:m-service component)]
-    {:stream-transactions (stream-transactions t-service)
-     :get-account (get-account a-service)
-     :money-transfer (money-transfer m-service)
+  (let [transaction-service (:transaction-service component)
+        account-creation-service (:account-creation-service component)
+        money-transfer-service (:money-transfer-service component)]
+    {:stream-transactions (stream-transactions transaction-service)
+     :get-account (get-account account-creation-service)
+     :money-transfer (money-transfer money-transfer-service)
      }))
 
 (defn load-schema
@@ -86,4 +86,4 @@
   []
   {:schema-provider (-> {}
                         map->SchemaProvider
-                        (component/using [:t-service :a-service :m-service]))})
+                        (component/using [:transaction-service :account-creation-service :money-transfer-service]))})

@@ -1,0 +1,20 @@
+@startuml
+
+title Topology
+
+package resources{
+    file logback.xml as lb
+    file schemas.edn as sc
+    file topology.edn as tf
+}
+component topology.jar as tj #Yellow
+component clients.clj as cl
+component value_generator.clj as vg
+
+tf --> tj: Provides topic info\nlinks topic to schema
+lb --> tj: Set logging defaults
+sc --> tj: Compiled to java objects\nAble to get all schema's
+tj <-- cl: Clojure producer\nand consumer
+tj <-- vg: Util functions for\niban and uuid
+
+@enduml

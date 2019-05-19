@@ -1,0 +1,21 @@
+@startuml
+
+title Command generator
+
+package "nl.openweb.command-generator.core.clj" #Yellow {
+    component accounts as a
+    component consumer as c
+    component producer as p
+}
+[Kafka cluster] as kc #Orange
+[Schema registry] as sr #Orange
+
+c -> a  :update accounts
+a -> p  :used to generate transfers
+c --> p :trigger command generation
+p --> kc :produces\nConfirmAccountCreation\nand\nConfirmMoneyTransfer
+c <-- kc :consumes\nHeartbeat\nand\nConfirmAccountCreation
+c <--- sr :get schema's
+p <--- sr :get schema's
+
+@enduml

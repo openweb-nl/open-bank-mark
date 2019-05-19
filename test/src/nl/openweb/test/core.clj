@@ -20,7 +20,7 @@
   (process/init)
   (load/init)
   (file/init)
-  (interactions/prep))
+  (interactions/prep max-interaction-time))
 
 (defn close
   [loop-number]

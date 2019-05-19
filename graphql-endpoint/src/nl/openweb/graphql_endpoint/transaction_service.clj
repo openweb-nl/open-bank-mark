@@ -73,7 +73,7 @@
 
 (defn new-service
   []
-  {:t-service (-> {}
+  {:transaction-service (-> {}
                   map->TransactionService
                   (component/using [:db]))})
 

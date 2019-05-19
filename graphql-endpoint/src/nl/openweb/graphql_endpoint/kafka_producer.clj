@@ -19,6 +19,6 @@
 
 (defn new-producer
   []
-  {:kafka-p (map->KafkaProducerWrapper {})})
+  {:kafka-producer (map->KafkaProducerWrapper {})})
 
 

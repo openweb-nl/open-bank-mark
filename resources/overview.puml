@@ -1,38 +1,36 @@
 @startuml
+
 left to right direction
 title All connections
-[Kafka cluster] as kc #Orange
-[Zookeeper cluster] as zc #Green
-[Schema registry] as sr
-[Synchronizer] as sy
-[Heartbeat] as hb
-[Command generator] as cg
-[Command handler] as ch
-[GraphQL endpoint] as ge
-[Frontend server] as fs
-actor client as cl
-database balancedb as pgb
-database transactiondb as pgt
 
-kc ..> zc : get and set meta data
-sy ..> kc : creates topics
+[Kafka cluster] as kc #Orange
+[Zookeeper cluster] as zc #Orange
+[Schema registry] as sr #Orange
+[Synchronizer] as sy #Yellow
+[Heartbeat] as hb #Yellow
+[Command generator] as cg #Yellow
+[Command handler] as ch #Yellow
+[GraphQL endpoint] as ge #Yellow
+[Frontend server] as fs #LightGreen
+actor client as cl
+database balancedb as pgb #LightBlue
+database transactiondb as pgt #LightBlue
+
 sy ..> sr : set schemas
-sr --> kc : store schemas
-hb --> sr : get schemas
-cg --> sr : get schemas
-ch --> sr : get schemas
-ge --> sr : get schemas
-hb --> kc : produces Heartbeat
-kc --> cg : consumes Heartbeat
-cg --> kc : produces ConfirmAccountCreation\n and ConfirmMoneyTransfer
-kc --> ch : consumes ConfirmAccountCreation\n and ConfirmMoneyTransfer
-ch --> kc : produces AccountCreationConfirmed,\nAccountCreationFailed,\nMoneyTransferConfirmed,\nMoneyTransferFailed and\nBalanceChanged
-kc --> ge : consumes ConfirmAccountCreation,\nConfirmMoneyTransfer and\nBalanceChanged
-ge --> kc : produces ConfirmAccountCreation\n and ConfirmMoneyTransfer
+sy ..> kc : creates topics
 fs --> cl : provides frontend code
-cl --> ge : create accounts and transactions
-ge --> cl : provides information
-pgb <--> ch : keep track witch messages have been handled\nkeep the balances
-pgt <--> ge : stores/queries transactions
+cl <--> ge : exchange information\nusing GraphQL
+zc <..> kc : get and set meta data
+cg <--> kc : consumes Heartbeat\nand ConfirmAccountCreation\nproduces ConfirmAccountCreation\n and ConfirmMoneyTransfer
+kc <--> ch : consumes ConfirmAccountCreation\n and ConfirmMoneyTransfer\nproduces AccountCreationConfirmed,\nAccountCreationFailed,\nMoneyTransferConfirmed,\nMoneyTransferFailed and\nBalanceChanged
+kc <--> ge : consumes ConfirmAccountCreation,\nConfirmMoneyTransfer and\nBalanceChanged\nproduces ConfirmAccountCreation\n and ConfirmMoneyTransfer
+hb --> kc : produces Heartbeat
+pgb <-> ch : keep track witch\nmessages have been handled\nkeep the balances
+pgt <-> ge : stores/queries transactions
+sr <-- ch : get schemas
+sr <-- ge : get schemas
+sr -> kc : store schemas
+hb <-- sr : get schemas
+cg <-- sr : get schemas
 
 @enduml

@@ -1,0 +1,17 @@
+@startuml
+
+title Output a test
+
+package nl.openweb.test #Yellow {
+    component file.clj as fi
+    component analysis.clj as an
+}
+file mapping.edn as map
+file "test-runs" as tr
+file ".html files" as ht
+
+fi --> map :reads the file
+fi --> tr: reads the mapped files
+an --> ht: combine the data to\na fromat vega can use\nand add imports etc.
+
+@enduml

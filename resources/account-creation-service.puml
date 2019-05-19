@@ -1,0 +1,23 @@
+@startuml
+
+title Account creation service
+
+package "nl.openweb.graphql-endpoint.money-transfer-service.clj" as ts #Yellow {
+    database account as ac #LightBlue
+    component producer as p
+    component consumer as c
+}
+
+[Kafka cluster] as kc #Orange
+actor client as cl
+component "schema-provider" as sp #Yellow
+
+ac -> p :make request using uuid
+c <-- kc :consumes\lAccountCreationConfirmed\nand\nAccountCreationFailed
+cl <-l-> sp :request account\lusing server\nneeds token and iban
+ac <-- sp :if the username\lalready exists\nchecks the password\notherwise insert\nwith new uuid
+p -> kc :produces\lConfirmAccountCreation
+c ---> sp :send AccountResult\nfor active subscriptions
+
+
+@enduml

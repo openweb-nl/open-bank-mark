@@ -1,6 +1,5 @@
 (ns nl.openweb.test.interactions
-  (:require [clojure.stacktrace :refer [print-stack-trace]]
-            [clojure.test :refer :all]
+  (:require [clojure.test :refer :all]
             [etaoin.api :refer :all]
             [etaoin.keys :as k])
   (:import (java.time Instant)))
@@ -11,11 +10,12 @@
 (def transaction-keys [1111 2323 3489 9999 21078])
 (def transaction-descriptions ["foo" "bar" "baz" "present" "fine"])
 (def transaction-values ["€11,11" "€23,23" "€34,89" "€99,99" "€210,78"])
+(def time-out (atom 5))
 
 (defn wait-till-value
   [expected-value]
   (let [start (inst-ms (Instant/now))]
-    (wait-has-text @driver {:css "#transactions div:nth-child(1) div div:nth-child(1) p:nth-child(1) span:nth-child(2)"} expected-value {:interval 0.05 :timeout 5})
+    (wait-has-text @driver {:css "#transactions div:nth-child(1) div div:nth-child(1) p:nth-child(1) span:nth-child(2)"} expected-value {:interval 0.05 :timeout @time-out})
     (- (inst-ms (Instant/now)) start)))
 
 (defn run-deposit
@@ -70,7 +70,8 @@
     (click {:css "#login-form div:nth-child(3)"})))
 
   (defn prep
-    []
+    [max-interaction-time]
+    (reset! time-out (int (Math/ceil (/ max-interaction-time 1000))))
     (reset! driver (chrome-headless))
     (login)
     (wait-till-button))

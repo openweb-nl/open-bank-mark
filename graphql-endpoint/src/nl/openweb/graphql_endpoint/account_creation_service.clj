@@ -78,14 +78,14 @@
     (if (crypto/check password (:account/password account))
       (do
         (add-sub (:subscriptions db) (:account/uuid account) source-stream)
-        (clients/produce (get-in db [:kafka-p :producer]) cac-topic (ConfirmAccountCreation. (Uuid. (uuid->bytes (:account/uuid account))) Atype/MANUAL)))
+        (clients/produce (get-in db [:kafka-producer :producer]) cac-topic (ConfirmAccountCreation. (Uuid. (uuid->bytes (:account/uuid account))) Atype/MANUAL)))
       (source-stream {:iban   nil
                       :token  nil
                       :reason "incorrect password"}))
     (let [uuid (UUID/randomUUID)
           sub-id (add-sub (:subscriptions db) uuid source-stream)]
       (insert-account! (get-in db [:db :datasource]) username password uuid)
-      (clients/produce (get-in db [:kafka-p :producer]) cac-topic (ConfirmAccountCreation. (Uuid. (uuid->bytes uuid)) Atype/MANUAL))
+      (clients/produce (get-in db [:kafka-producer :producer]) cac-topic (ConfirmAccountCreation. (Uuid. (uuid->bytes uuid)) Atype/MANUAL))
       sub-id)))
 
 (defrecord AccountCreationService []
@@ -109,9 +109,9 @@
 
 (defn new-service
   []
-  {:a-service (-> {}
+  {:account-creation-service (-> {}
                   map->AccountCreationService
-                  (component/using [:kafka-p :db]))})
+                  (component/using [:kafka-producer :db]))})
 
 (defn stop-transaction-subscription
   [db id]
