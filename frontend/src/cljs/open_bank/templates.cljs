@@ -18,7 +18,7 @@
         [:a.navbar-item
          {:class    (if (= selected-nav :home) "is-active")
           :on-click #(re-frame/dispatch [::events/set-selected-nav :home])}
-         [:img {:src "/img/logo.png"}]]
+         [:img {:src "/img/logo.svg" :style {:width "140px"}}]]
         [:a.navbar-item.is-hidden-tablet
          {:on-click #(re-frame/dispatch [::events/toggle-show-left])}
          (if show-left
@@ -28,11 +28,14 @@
          {:target "_blank", :href "https://www.openweb.nl"}
          [:span.icon {:style {:color "#95c23d"}} [:i.mdi.mdi-24px.mdi-domain]]]
         [:a.navbar-item.is-hidden-desktop
-         {:target "_blank", :href "https://twitter.com/GKlijs"}
+         {:target "_blank", :href "https://twitter.com/OpenWebNL"}
          [:span.icon {:style {:color "#1da1f2"}} [:i.mdi.mdi-24px.mdi-twitter]]]
         [:a.navbar-item.is-hidden-desktop
-         {:target "_blank", :href "https://www.linkedin.com/in/gerard-klijs-416b3744/"}
+         {:target "_blank", :href "https://www.linkedin.com/company/open-web-it-services/"}
          [:span.icon {:style {:color "#0077B5"}} [:i.mdi.mdi-24px.mdi-linkedin-box]]]
+        [:a.navbar-item.is-hidden-desktop
+         {:target "_blank", :href "https://github.com/openweb-nl/open-bank-mark"}
+         [:span.icon {:style {:color "#24292e"}} [:i.mdi.mdi-24px.mdi-github-circle]]]
         [:button.button.navbar-burger
          {:on-click #(re-frame/dispatch [::events/toggle-mob-expand])
           :class    (if expand "is-active")}
@@ -48,13 +51,13 @@
           {:target "_blank", :href "https://www.openweb.nl"}
           [:span.icon {:style {:color "#95c23d"}} [:i.mdi.mdi-24px.mdi-domain]]]
          [:a.navbar-item.is-hidden-touch
-          {:target "_blank", :href "https://twitter.com/GKlijs"}
+          {:target "_blank", :href "https://twitter.com/OpenWebNL"}
           [:span.icon {:style {:color "#1da1f2"}} [:i.mdi.mdi-24px.mdi-twitter]]]
          [:a.navbar-item.is-hidden-touch
-          {:target "_blank", :href "https://www.linkedin.com/in/gerard-klijs-416b3744/"}
+          {:target "_blank", :href "https://www.linkedin.com/company/open-web-it-services/"}
           [:span.icon {:style {:color "#0077B5"}} [:i.mdi.mdi-24px.mdi-linkedin-box]]]
          [:a.navbar-item.is-hidden-touch
-          {:target "_blank", :href "https://github.com/gklijs"}
+          {:target "_blank", :href "https://github.com/openweb-nl/open-bank-mark"}
           [:span.icon {:style {:color "#24292e"}} [:i.mdi.mdi-24px.mdi-github-circle]]]]]])
 
 (defn deposit-button
