@@ -16,8 +16,9 @@ file output
 fi <- pr: run every 20 iterations
 in -> fi: time ms
 fi --> output :writes the data
-in --> cd :logs in and\lmake transactions
+in <--> cd :logs in and\lmake transactions
 lo --> hb :sets the load
-pr --> do :get cpu and\lmemory of\ncontainers
+pr <-- do :get cpu and\lmemory of\ncontainers
+pr <--- hb :get total\lHeartbeats send
 
 @enduml

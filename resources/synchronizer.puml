@@ -9,7 +9,7 @@ package nl.openweb.synchronizer #Yellow {
 [Kafka cluster] as kc #Orange
 [Schema registry] as sr #Orange
 
-admin --> kc: creates/deletes topics\nusing the topology.edn\ntodo is update
+admin --> kc: creates/deletes topics\nusing the topology.edn\n
 schema --> sr: sets/updates the schema's\nusing the schemas.edn
 
 @enduml

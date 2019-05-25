@@ -8,14 +8,11 @@ package "nl.openweb.command-generator.core.clj" #Yellow {
     component producer as p
 }
 [Kafka cluster] as kc #Orange
-[Schema registry] as sr #Orange
 
-c -> a  :update accounts
-a -> p  :used to generate transfers
-c --> p :trigger command generation
-p --> kc :produces\nConfirmAccountCreation\nand\nConfirmMoneyTransfer
-c <-- kc :consumes\nHeartbeat\nand\nConfirmAccountCreation
-c <--- sr :get schema's
-p <--- sr :get schema's
+c -> a  :update ibans used
+a --> p  :used to generate\ltransfers
+c -> p :trigger\lcommand generation
+p -> kc :produces\lConfirmAccountCreation\nand\nConfirmMoneyTransfer
+c <-- kc :consumes\lHeartbeat\nand\nConfirmAccountCreation
 
 @enduml

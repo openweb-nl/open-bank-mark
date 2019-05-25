@@ -20,15 +20,15 @@ sy ..> sr : set schemas
 sy ..> kc : creates topics
 fs --> cl : provides frontend code
 cl <--> ge : exchange information\nusing GraphQL
-zc <..> kc : get and set meta data
-cg <--> kc : consumes Heartbeat\nand ConfirmAccountCreation\nproduces ConfirmAccountCreation\n and ConfirmMoneyTransfer
-kc <--> ch : consumes ConfirmAccountCreation\n and ConfirmMoneyTransfer\nproduces AccountCreationConfirmed,\nAccountCreationFailed,\nMoneyTransferConfirmed,\nMoneyTransferFailed and\nBalanceChanged
-kc <--> ge : consumes ConfirmAccountCreation,\nConfirmMoneyTransfer and\nBalanceChanged\nproduces ConfirmAccountCreation\n and ConfirmMoneyTransfer
+kc <..> zc : get and set meta data
+cg <--> kc : exchange data using avro
+kc <--> ch : exchange data using avro
+kc <--> ge : exchange data using avro
 hb --> kc : produces Heartbeat
-pgb <-> ch : keep track witch\nmessages have been handled\nkeep the balances
-pgt <-> ge : stores/queries transactions
-sr <-- ch : get schemas
-sr <-- ge : get schemas
+pgb <-> ch : keep track witch\rmessages have been handled\nkeep the balances
+pgt <-> ge : stores/queries transactions\rstores profiles
+sr --> ch : get schemas
+sr --> ge : get schemas
 sr -> kc : store schemas
 hb <-- sr : get schemas
 cg <-- sr : get schemas

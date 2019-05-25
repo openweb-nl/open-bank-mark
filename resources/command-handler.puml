@@ -3,10 +3,10 @@
 title Command handler
 
 package "nl.openweb.command-handler.core.clj" #Yellow {
-    component "cmt-handler" as mth
-    component "cac-handler" as ach
     component consumer as c
     component producer as p
+    component "cmt-handler" as mth
+    component "cac-handler" as ach
 }
 package balancedb #LightBlue{
     database balance
@@ -19,7 +19,7 @@ mth --> cmt :check/update status
 ach --> cac :check/update status
 mth --> balance :check/update balance
 ach --> balance :crates balance
-p --> kc :AccountCreationConfirmed,\nAccountCreationFailed,\nMoneyTransferConfirmed,\nMoneyTransferFailed and\nBalanceChanged
+kc --> p :AccountCreationConfirmed,\nAccountCreationFailed,\nMoneyTransferConfirmed,\nMoneyTransferFailed and\nBalanceChanged
 c <-- kc :ConfirmAccountCreation\n and ConfirmMoneyTransfer
 
 @enduml
