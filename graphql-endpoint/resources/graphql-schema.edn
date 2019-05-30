@@ -6,7 +6,7 @@
  {:Transaction
   {:description "The result of money successfully being transferred"
    :fields      {
-                 :id          {:type (non-null ID)}
+                 :id          {:type (non-null Int)}
                  :iban        {:type String :description "The iban of the account that was changed."}
                  :new_balance {:type String :description "The amount in euros after the transaction."}
                  :changed_by  {:type String :description "The amount in euros of the change, a negative number means debit, positive is credit."}
@@ -33,7 +33,7 @@
   :transaction_by_id
   {:type        :Transaction
    :description "Select a transaction by its unique id, if it exists."
-   :args        {:id {:type (non-null ID)}}
+   :args        {:id {:type (non-null Int)}}
    :resolve     :query/transaction-by-id}
   :transactions_by_iban
   {:type        (list Transaction)

@@ -80,7 +80,7 @@
 (defn find-transaction-by-id
   [db id]
   (if-let [sql-transaction (with-open [conn (j/get-connection (get-in db [:db :datasource]))]
-                              (j/execute-one! conn ["SELECT * FROM transaction WHERE id = ?" (read-string id)]))]
+                              (j/execute-one! conn ["SELECT * FROM transaction WHERE id = ?" id]))]
     (sql-transaction->graphql-transaction sql-transaction)))
 
 (defn find-transactions-by-iban

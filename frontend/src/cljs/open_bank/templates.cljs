@@ -185,7 +185,8 @@
             direction (:direction transaction)
             new-balance (:new_balance transaction)]
            [:div.box
-            (let [map {:key   id
+            (let [map {:id (str "transaction-box-" id)
+                       :key   id
                        :class (if is-last "will-fade-out" "will-fade-in")}]
                  (if is-last
                    (assoc map :style {:visibility "hidden"})
@@ -270,7 +271,7 @@
                                                                     money_transfer(amount: $amount descr: $descr
                                                                    from: $from token: $token to: $to uuid: $uuid)
                                                                    {reason success uuid}}"
-                                                              {:amount @amount
+                                                              {:amount (js/parseInt @amount)
                                                                :from   (:iban login-status)
                                                                :token  (:token login-status)
                                                                :to     @to
@@ -327,10 +328,12 @@
       [max-items m-i]
       (if (= max-items m-i)
         [:a.button.is-success.is-active
-         {:key m-i}
+         {:id (str "max-items-" m-i)
+          :key m-i}
          [:p m-i]]
         [:a.button.is-info
-         {:key      m-i
+         {:id (str "max-items-" m-i)
+          :key      m-i
           :on-click #(re-frame/dispatch [::events/set-max-items m-i])}
          [:p m-i]]))
 
@@ -344,7 +347,8 @@
 (defn argument-button
       [a-k label show-arguments]
       [:a.button
-       {:key      a-k
+       {:id (str "show-argument-" label)
+        :key      a-k
         :class    (if (a-k show-arguments) "is-success" "is-info")
         :on-click #(re-frame/dispatch [::events/toggle-show a-k])}
        (if (a-k show-arguments)
