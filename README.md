@@ -19,8 +19,8 @@ Contents
   * [Test](#test)
 * [Scripts](#scripts)
 * [Variants](#variants)
-  * [Three brokers](#3brokers)
-  * [One broker](#1broker)
+  * [Three brokers](#three-brokers)
+  * [One broker](#one-broker)
 * [Results](#results)
 
 ## <a id="intro">Intro</a>
@@ -221,7 +221,7 @@ Before running a test make sure any old images that are not the same are deleted
 There are roughly two different kind of variants, the ones using just one broker with a reduced batch-cycle so it does not time out and can be run on TravisCi.
 These are based on the one-broker branch. And the 'default' variants using three brokers, which are more realistic but for which 2 cpu's is to little to shine. 
 
-### <a id="#3brokers">Three brokers</a>
+### <a id="#three-brokers">Three brokers</a>
 
 In [ch-kotlin](https://github.com/gklijs/open-bank-mark/tree/ch-kotlin) the command handler has been replaced by one written in Kotlin using Spring Boot.
 
@@ -230,7 +230,7 @@ It's using Diesel, an orm library. It has a nice way of doing updates as functio
  
 In [ch-rust-native](https://github.com/gklijs/open-bank-mark/tree/ch-rust-native) instead a native rust library is used. Witch makes it possible to create a docker image of just 8 Mb.
 
-### <a id="#1broker">One broker</a>
+### <a id="#one-broker">One broker</a>
 
 In [one-broker-ch-kotlin](https://github.com/gklijs/open-bank-mark/tree/one-broker-ch-kotlin) the command handler has been replaced by one written in Kotlin using Spring Boot.
 
