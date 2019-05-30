@@ -1,5 +1,7 @@
 # Open Bank Mark
 
+[![Build Status](https://travis-ci.com/openweb-nl/open-bank-mark.svg?branch=master)](https://travis-ci.com/openweb-nl/open-bank-mark)
+
 Contents
 * [Intro](#intro)
 * [Development](#development)
@@ -16,10 +18,16 @@ Contents
   * [Frontend](#frontend)
   * [Test](#test)
 * [Scripts](#scripts)
+* [Variants](#variants)
+  * [Three brokers](#3brokers)
+  * [One broker](#1broker)
+* [Results](#results)
 
 ## <a id="intro">Intro</a>
 
 This project is an example of an event sourcing application using Kafka.
+The front-end can be viewed at [open-bank](https://open-bank.gklijs.tech/) which is for now configured to have the endpoint running on localhost.
+In the background tab are the results of comparing 4 languages, which all ran 10 times on TravisCi, with one broker.
 It also contains an end-to-end test making it possible to compare different implementations or configurations. For example one could set the `linger.ms` setting at different values in the topology module, so everything build on Clojure will use that setting.
 Another option would be to drag [KSQL](https://docs.confluent.io/current/ksql/docs/quickstart.html) into the project and use topics instead of a database for the command-handler.
 It's possible to run tests in travis using the `.travis.yml` file, or on some other machine using the `loop.sh` script.
@@ -35,7 +43,8 @@ You can leave the key empty, but when you supply a key, it can be used to divide
 For the other messages we use the id as key. This will prevent BalanceChanged events to appear in incorrect order in case of hiccups or errors.
 Another way the keys can be used is to 'overwrite' the message with the same key. You can make a compacted topic, where the last message with some key will always be kept. You can use this with Kafka streams api to generate a 'table' view of a topic.
 
-This project and it's modules are build with [Clojure](https://clojure.org/), and uses [Leiningen](https://leiningen.org/) as build tool. For building locally sassc is needed, for unix you can see the [travis config](/.travis.yml) or [ask ubuntu answer](https://askubuntu.com/questions/566675/how-to-install-node-sass-gulp-sass-on-ubuntu-14-04-or-linux-mint-17/566681#566681), on Mac with brew you can use `brew install sassc`.Some modules can be used from java, and some of the code generated (Avro classes) are also java. In the `ch-kotlin` branch there is an example of using Kotlin for the command handler, and a `ch-rust` with a rust implementation of the command-handler. Even when using Docker you need to have leiningen and sassc installed to build the project. This is mainly because of the use of modules, and also because the Kotlin version need the compiled topology it would need some trickery to work. 
+This project and it's modules are build with [Clojure](https://clojure.org/), and uses [Leiningen](https://leiningen.org/) as build tool. For building locally sassc is needed, for unix you can see the [travis config](/.travis.yml) or [ask ubuntu answer](https://askubuntu.com/questions/566675/how-to-install-node-sass-gulp-sass-on-ubuntu-14-04-or-linux-mint-17/566681#566681), on Mac with brew you can use `brew install sassc`.Some modules can be used from java, and some of the code generated (Avro classes) are also java.
+Even when using Docker you need to have leiningen and sassc installed to build the project.
 
 The base idea of the project is to serve as an example of event sourcing, where instead of having a 'state' as source of truth we use events. It makes use of some of the best practices by using both events which start with 'Confirm', which need to be handled by another component and lead to either a 'Confirmed' or 'Failed' event.
 By using id's in the messages, when needed the creator of the 'Confirm' event can eventually know whether the command succeeded. Sometimes there may be additional information in the confirmed events, failed events typically contain the reason why the command failed. Even trough the 'real' source of truth or events, most component keep some kind of state. In this particular project almost all state only exists in memory, and even the Kafka containers are not configured to have use data volumes.
@@ -203,3 +212,35 @@ There are several scripts to automate things and thus making live easier. They a
 * `restart.sh` is used to stop and start the whole setup, it does not start a test. When it's finished the application should be accessible at port 8181. 
 * `setup-db.sh` is used to setup the database. It takes the name of the Docker container to execute it on as the first argument and the port used as the second. When running a local PostgreSQL you could copy parts of it to crate the tables and indexes.
 * `synchronize.sh` is used as part of the restart to set both the Kafka topics and schema's in the schema registry.
+
+## <a id="variants">Variants</a>
+
+Putting variations of master in different branches, changing also the base-file-name makes it easy to run the same code again.
+Before running a test make sure any old images that are not the same are deleted, so you not accidentally run the wrong test.
+ 
+There are roughly two different kind of variants, the ones using just one broker with a reduced batch-cycle so it does not time out and can be run on TravisCi.
+These are based on the one-broker branch. And the 'default' variants using three brokers, which are more realistic but for which 2 cpu's is to little to shine. 
+
+### <a id="#3brokers">Three brokers</a>
+
+In [ch-kotlin](https://github.com/gklijs/open-bank-mark/tree/ch-kotlin) the command handler has been replaced by one written in Kotlin using Spring Boot.
+
+In [ch-rust](https://github.com/gklijs/open-bank-mark/tree/ch-rust) the command handler has been replaced by one written in Rust, using the librdkafka 1.0.0 for most of the heavy lifting.
+It's using Diesel, an orm library. It has a nice way of doing updates as function, making it less likely for inconsistencies to occur. This also causes more load on the database.
+ 
+In [ch-rust-native](https://github.com/gklijs/open-bank-mark/tree/ch-rust-native) instead a native rust library is used. Witch makes it possible to create a docker image of just 8 Mb.
+
+### <a id="#1broker">One broker</a>
+
+In [one-broker-ch-kotlin](https://github.com/gklijs/open-bank-mark/tree/one-broker-ch-kotlin) the command handler has been replaced by one written in Kotlin using Spring Boot.
+
+In [one-broker-ch-rust](https://github.com/gklijs/open-bank-mark/tree/one-broker-ch-rust) the command handler has been replaced by one written in Rust, using the librdkafka 1.0.0 for most of the heavy lifting.
+It's using Diesel, an orm library. It has a nice way of doing updates as function, making it less likely for inconsistencies to occur. This also causes more load on the database.
+
+In [one-broker-ch-rust-native](https://github.com/gklijs/open-bank-mark/tree/one-broker-ch-rust-native) instead a native rust library is used. Witch makes it possible to create a docker image of just 8 Mb.
+
+## <a id="results">Results</a>
+
+The results of comparing 4 different implementations of the Command Handler can be found here [open-bank](https://open-bank.gklijs.tech/).
+Some of the graphs where presented at a Kafka meetup of which the slides are available on [speakerdeck](https://speakerdeck.com/gklijs/adding-some-rust-to-your-kafka).
+The raw data for these can be found in [data-ch-languages-one-broker](https://github.com/gklijs/open-bank-mark/tree/data-ch-languages-one-broker).
