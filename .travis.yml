@@ -3,11 +3,12 @@ language: clojure
 lein: 2.9.1
 jdk: openjdk11
 addons:
+  chrome: stable
   apt:
     sources:
       - google-chrome
     packages:
-      - chromium-browser=73.0.3683.86-0ubuntu0.16.04.1
+      - chromium-browser=74.0.3729.169-0ubuntu0.16.04.1
       - chromium-chromedriver
 install:
   - cd /opt
