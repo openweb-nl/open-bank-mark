@@ -23,4 +23,4 @@
                        org.clojure/tools.logging                      "0.4.1"
                        org.postgresql/postgresql                      "42.2.5"
                        nrepl/nrepl                                    "0.6.0"
-                       seancorfield/next.jdbc                         "1.0.0-beta1"}})
+                       seancorfield/next.jdbc                         "1.0.0"}})

@@ -208,7 +208,7 @@ It's the easiest to run the tests and generate the output with the scripts using
 There are several scripts to automate things and thus making live easier. They are placed at the root level to not make them to complicated. Often they need multiple modules.
 * `clean.sh` stops and removes all used Docker container, it does not throw away the images
 * `loop.sh` takes a number and will (re)create the whole environment, and run a test x times.
-* `prepare.sh` is needed the first time before `restart.sh` can be used. It will get all the dependencies and build jar's. It needs leiningen, maven, sassc to be installed.
+* `prepare.sh` is needed the first time before `restart.sh` can be used. It will get all the dependencies and build jar's. It needs leiningen, maven, sassc to be installed. As last step it will (re)build the docker images.
 * `restart.sh` is used to stop and start the whole setup, it does not start a test. When it's finished the application should be accessible at port 8181. 
 * `setup-db.sh` is used to setup the database. It takes the name of the Docker container to execute it on as the first argument and the port used as the second. When running a local PostgreSQL you could copy parts of it to crate the tables and indexes.
 * `synchronize.sh` is used as part of the restart to set both the Kafka topics and schema's in the schema registry.
@@ -216,7 +216,8 @@ There are several scripts to automate things and thus making live easier. They a
 ## <a id="variants">Variants</a>
 
 Putting variations of master in different branches, changing also the base-file-name makes it easy to run the same code again.
-Before running a test make sure any old images that are not the same are deleted, so you not accidentally run the wrong test.
+Before running a test make sure any old images, that are not the same are deleted, so you not accidentally run the wrong test.
+This can be done by using the `prepare.sh` script, or just the last line `docker-compose -f docker-bank.yml -f docker-prep.yml build` if you already have new artifacts ready.
  
 There are roughly two different kind of variants, the ones using just one broker with a reduced batch-cycle so it does not time out and can be run on TravisCi.
 These are based on the one-broker branch. And the 'default' variants using three brokers, which are more realistic but for which 2 cpu's is to little to shine. 

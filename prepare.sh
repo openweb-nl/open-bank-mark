@@ -8,3 +8,4 @@ lein install
 cd ..
 lein modules uberjar
 java -jar test/target/test.jar mapping
+docker-compose -f docker-bank.yml -f docker-prep.yml build
