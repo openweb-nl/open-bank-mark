@@ -4,8 +4,8 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/clojurescript "1.10.520"]
                  [reagent "0.8.1"]
-                 [re-frame "0.10.6"]
-                 [re-graph "0.1.8"]]
+                 [re-frame "0.10.8"]
+                 [re-graph "0.1.10"]]
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-sass "0.5.0"]]
   :min-lein-version "2.5.3"
@@ -19,8 +19,8 @@
   :profiles
   {:dev
    {:dependencies [[binaryage/devtools "0.9.10"]
-                   [day8.re-frame/re-frame-10x "0.4.0"]]
-    :plugins      [[lein-figwheel "0.5.15"]]}}
+                   [day8.re-frame/re-frame-10x "0.4.1"]]
+    :plugins      [[lein-figwheel "0.5.19"]]}}
   :cljsbuild
   {:builds
    [{:id           "dev"

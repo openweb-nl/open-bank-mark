@@ -8,11 +8,11 @@
                  [com.fasterxml.jackson.core/jackson-databind :version]
                  [io.confluent/kafka-avro-serializer :version :exclusions [io.netty/netty org.slf4j/slf4j-log4j12 com.fasterxml.jackson.core/jackson-core]]
                  [org.apache.avro/avro :version]
-                 [org.apache.kafka/kafka-clients "2.2.0"]
+                 [org.apache.kafka/kafka-clients "2.3.0"]
                  [org.clojure/clojure :version]
                  [org.clojure/tools.logging :version]]
   :java-source-paths ["target/main/java"]
-  :javac-options ["-target" "1.8" "-source" "1.8"]
+  :javac-options ["-target" "11" "-source" "11"]
   :prep-tasks ["compile" "javac"]
   :aot :all
   :profiles {:provided {:dependencies [[org.apache.avro/avro-compiler "1.8.2"]]

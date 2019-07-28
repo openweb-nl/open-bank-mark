@@ -3,7 +3,7 @@
             :dependencies [[com.fasterxml.jackson.core/jackson-annotations :version]
                            [com.fasterxml.jackson.core/jackson-core :version]
                            [com.fasterxml.jackson.core/jackson-databind :version]
-                           [etaoin "0.3.3"]
+                           [etaoin "0.3.5"]
                            [kixi/stats "0.5.0"]
                            [lispyclouds/clj-docker-client "0.2.3"]
                            [metasoarous/oz "1.6.0-alpha2"]
