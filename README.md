@@ -1,3 +1,5 @@
+Active development has moved to [kafka-graphql-examples](https://github.com/openweb-nl/kafka-graphql-examples) which is more focused about graphql, and in ways is simpler than this project.
+
 # Open Bank Mark
 
 [![Build Status](https://travis-ci.com/openweb-nl/open-bank-mark.svg?branch=master)](https://travis-ci.com/openweb-nl/open-bank-mark)
