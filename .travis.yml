@@ -8,7 +8,7 @@ addons:
     sources:
       - google-chrome
     packages:
-      - chromium-browser=74.0.3729.169-0ubuntu0.16.04.1
+      - chromium-browser
       - chromium-chromedriver
 install:
   - cd /opt
